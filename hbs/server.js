@@ -1,14 +1,13 @@
 //import
 const express = require("express");
 const path = require("path");
-const exphbs = require("express-handlebars");
 const membersRoute = require("./routes/routes");
+
 const members = require("./model/Member");
 
 //setup
 const app = express();
-app.engine("handlebars", exphbs);
-app.set("view engine", "hbs");
+app.set("view engine", "ejs");
 app.set("views", "views");
 
 //midlewares
@@ -18,7 +17,7 @@ app.use(express.json());
 
 app.get("/", (req, res, next) => {
   res.render("index", {
-    title: "Hola with HBS",
+    title: "Hola with EJS",
     members,
   });
 });
