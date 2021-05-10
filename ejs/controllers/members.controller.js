@@ -1,37 +1,43 @@
 const { v4: uuidv4 } = require("uuid");
 const members = require("../model/Member");
 
-exports.getAllMember = (req, res, next) => {
+exports.getAllMembers = (req, res, next) => {
   res.json(members);
 };
 
-exports.getMember = (req, res, next) => {
+exports.getOneMember = (req, res, next) => {
   const found = members.some((member) => member.id === req.params.id);
+
+  console.log(found);
+
   if (found) {
     res.json(
       members.filter((member) => {
+        console.log("paramsID: ", req.params.id);
+        console.log("memberID: ", member.id);
         return member.id === req.params.id;
       })
     );
   } else {
+    //400 = Bad Request
     res.status(400).json({ msg: `No member with the id of ${req.params.id}` });
   }
 };
 
 exports.createMember = (req, res, next) => {
   const newMember = {
-    id: uuid4(),
+    id: uuidv4(),
     status: "active",
     ...req.body,
-    // name: req.body.name,
-    // email: req.body.email,
   };
+  // console.log(newMember)
   members.push(newMember);
   res.redirect("/");
 };
 
 exports.updateMember = (req, res, next) => {
   const found = members.some((member) => member.id === req.params.id);
+
   if (found) {
     const updatedMember = members.map((member) => {
       if (member.id === req.params.id) {
@@ -42,24 +48,25 @@ exports.updateMember = (req, res, next) => {
       }
       return member;
     });
-    res.json({ msg: `Updated ${updatedMember}` });
+    res.json({ msg: "Member updated", updatedMember });
   } else {
-    res.status(400).json({
-      msg: `Unable to update with member with the id of ${req.params.id}`,
-    });
+    res
+      .status(400)
+      .json({ msg: `Unable to update with member of id: ${req.params.id}` });
   }
+};
 
-  exports.deleteMember = (req, res, next) => {
-    const found = members.some((member) => member.id === req.params.id);
-    if (found) {
-      res.json({
-        msg: "Deleted",
-        member: members.filter((member) => member.id !== req.params.id),
-      });
-    } else {
-      res
-        .status(400)
-        .json({ msg: `No with member with the id of ${req.params.id}` });
-    }
-  };
+exports.deleteMember = (req, res, next) => {
+  const found = members.some((member) => member.id === req.params.id);
+
+  if (found) {
+    //deleting logic......
+
+    res.json({
+      msg: "Member deleted successfully",
+      member: members.filter((member) => member.id !== req.params.id),
+    });
+  } else {
+    res.status(400).json({ msg: `No member with the id of ${req.params.id}` });
+  }
 };

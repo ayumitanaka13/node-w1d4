@@ -1,36 +1,37 @@
-//import
 const express = require("express");
 const path = require("path");
-const membersRoute = require("./routes/routes");
+const exphbs = require("express-handlebars");
 
+const membersRoute = require("./routes/routes");
 const members = require("./model/Member");
 
 //setup
 const app = express();
-app.set("view engine", "ejs");
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 app.set("views", "views");
 
-//midlewares
+//middlewares
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.get("/", (req, res, next) => {
   res.render("index", {
-    title: "Hola with EJS",
+    title: "Hola with HBS",
     members,
   });
 });
 
-//Routes
+//routes
 app.use("/api/members", membersRoute);
 
+//catch-all-middleware
 app.use((req, res, next) => {
   res.render("404", {
-    title: "Page not found",
+    title: "Page Not Found",
   });
 });
 
-//server
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`Server has started on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server started at port: ${PORT}`));
